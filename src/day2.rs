@@ -65,7 +65,7 @@ pub fn input_gen_part1(input: &str) -> Vec<(Symbol, Symbol)> {
     input
         .lines()
         .map(|e| {
-            let (first, second) = e.split_once(" ").unwrap();
+            let (first, second) = e.split_once(' ').unwrap();
             let other = match first {
                 "A" => Symbol::Rock,
                 "B" => Symbol::Paper,
@@ -97,7 +97,7 @@ pub fn input_gen_part2(input: &str) -> Vec<(Symbol, Ending)> {
     input
         .lines()
         .map(|e| {
-            let (first, second) = e.split_once(" ").unwrap();
+            let (first, second) = e.split_once(' ').unwrap();
             let other = match first {
                 "A" => Symbol::Rock,
                 "B" => Symbol::Paper,

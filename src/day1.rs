@@ -9,11 +9,7 @@ pub struct Elf {
 pub fn input_gen(input: &str) -> Vec<Elf> {
     input
         .split("\n\n")
-        .map(|e| {
-            e.lines()
-                .map(|c| usize::from_str_radix(c, 10).unwrap())
-                .collect()
-        })
+        .map(|e| e.lines().map(|c| c.parse::<usize>().unwrap()).collect())
         .map(|c| Elf { calories: c })
         .collect()
 }

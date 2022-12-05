@@ -2,7 +2,7 @@ use aoc_runner_derive::{aoc, aoc_generator};
 
 type Item = char;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Rucksack {
     items: Vec<Item>,
     compartment_1: Vec<Item>,
@@ -35,12 +35,10 @@ pub fn solve_part1(input: &[Rucksack]) -> u32 {
     input
         .iter()
         .filter_map(|rucksack| {
-            for item in rucksack.compartment_1.iter() {
-                if rucksack.compartment_2.iter().any(|i| i == item) {
-                    return Some(item);
-                }
-            }
-            None
+            rucksack
+                .compartment_1
+                .iter()
+                .find(|&item| rucksack.compartment_2.iter().any(|i| i == item))
         })
         .map(|&item| match item {
             'a'..='z' => u32::from(item) - u32::from('a') + 1,
@@ -67,12 +65,9 @@ pub fn solve_part2(input: &[Groups]) -> u32 {
     input
         .iter()
         .filter_map(|group| {
-            for item in group.bag_1.iter() {
-                if group.bag_2.iter().any(|i| i == item) && group.bag_3.iter().any(|i| i == item) {
-                    return Some(item);
-                }
-            }
-            None
+            group.bag_1.iter().find(|&item| {
+                group.bag_2.iter().any(|i| i == item) && group.bag_3.iter().any(|i| i == item)
+            })
         })
         .map(|&item| match item {
             'a'..='z' => u32::from(item) - u32::from('a') + 1,

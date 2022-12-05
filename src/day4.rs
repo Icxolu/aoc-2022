@@ -1,7 +1,7 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 use std::ops::RangeInclusive;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Pair {
     range_1: RangeInclusive<u32>,
     range_2: RangeInclusive<u32>,
@@ -15,12 +15,7 @@ pub fn input_gen(input: &str) -> Vec<Pair> {
             let (r1, r2) = e.split_once(',').unwrap();
             let range = |r: &str| {
                 r.split_once('-')
-                    .map(|(a, b)| {
-                        (
-                            u32::from_str_radix(a, 10).unwrap(),
-                            u32::from_str_radix(b, 10).unwrap(),
-                        )
-                    })
+                    .map(|(a, b)| (a.parse::<u32>().unwrap(), b.parse::<u32>().unwrap()))
                     .map(|(a, b)| a..=b)
                     .unwrap()
             };
@@ -36,16 +31,11 @@ pub fn input_gen(input: &str) -> Vec<Pair> {
 pub fn solve_part1(input: &[Pair]) -> usize {
     input
         .iter()
-        .filter_map(|pair| {
-            if (pair.range_1.start() <= pair.range_2.start()
+        .filter(|pair| {
+            (pair.range_1.start() <= pair.range_2.start()
                 && pair.range_1.end() >= pair.range_2.end())
                 || (pair.range_2.start() <= pair.range_1.start()
                     && pair.range_2.end() >= pair.range_1.end())
-            {
-                Some(pair)
-            } else {
-                None
-            }
         })
         .count()
 }
@@ -54,14 +44,9 @@ pub fn solve_part1(input: &[Pair]) -> usize {
 pub fn solve_part2(input: &[Pair]) -> usize {
     input
         .iter()
-        .filter_map(|pair| {
-            if pair.range_1.start().max(pair.range_2.start())
+        .filter(|pair| {
+            pair.range_1.start().max(pair.range_2.start())
                 <= pair.range_1.end().min(pair.range_2.end())
-            {
-                Some(pair)
-            } else {
-                None
-            }
         })
         .count()
 }
