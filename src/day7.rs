@@ -2,18 +2,18 @@ use aoc_runner_derive::aoc;
 use std::collections::{hash_map::Values, HashMap};
 
 #[derive(Debug)]
-struct Directory(HashMap<String, Node>);
+struct Directory<'a>(HashMap<&'a str, Node<'a>>);
 
-impl Directory {
+impl<'a> Directory<'a> {
     fn new() -> Self {
         Self(HashMap::new())
     }
 
-    fn insert(&mut self, key: String, value: Node) {
+    fn insert(&mut self, key: &'a str, value: Node<'a>) {
         self.0.insert(key, value);
     }
 
-    fn get_mut(&mut self, key: &str) -> Option<&mut Node> {
+    fn get_mut(&mut self, key: &'a str) -> Option<&mut Node<'a>> {
         self.0.get_mut(key)
     }
 
@@ -36,12 +36,12 @@ impl Directory {
 }
 
 struct DirIter<'a> {
-    values: Values<'a, String, Node>,
-    childs: Vec<&'a Directory>,
+    values: Values<'a, &'a str, Node<'a>>,
+    childs: Vec<&'a Directory<'a>>,
 }
 
 impl<'a> Iterator for DirIter<'a> {
-    type Item = &'a Directory;
+    type Item = &'a Directory<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
@@ -62,12 +62,12 @@ impl<'a> Iterator for DirIter<'a> {
 }
 
 #[derive(Debug)]
-enum Node {
-    Directory(Directory),
+enum Node<'a> {
+    Directory(Directory<'a>),
     File { size: u64 },
 }
 
-fn input_gen(input: &mut &str, tree: &mut Directory) {
+fn input_gen<'a>(input: &mut &'a str, tree: &mut Directory<'a>) {
     loop {
         if input.is_empty() {
             return;
@@ -78,7 +78,7 @@ fn input_gen(input: &mut &str, tree: &mut Directory) {
 
         if line.starts_with("dir") {
             tree.insert(
-                line.trim_start_matches("dir ").to_owned(),
+                line.trim_start_matches("dir "),
                 Node::Directory(Directory::new()),
             );
         } else if line == "$ ls" || line == "$ cd /" {
@@ -90,7 +90,7 @@ fn input_gen(input: &mut &str, tree: &mut Directory) {
         } else {
             let (size, name) = line.split_once(' ').unwrap();
             tree.insert(
-                name.to_owned(),
+                name,
                 Node::File {
                     size: size.parse().unwrap(),
                 },
